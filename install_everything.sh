@@ -52,6 +52,8 @@ source activate $ENVIRONMENT_NAME
 #This version of numpy may not be available via conda.
 pip install numpy==1.15.3
 
+pip install naima
+
 # Install root_numpy making sure it is built against the installed version of ROOT
 pip uninstall root_numpy
 export MACOSX_DEPLOYMENT_TARGET=10.10
