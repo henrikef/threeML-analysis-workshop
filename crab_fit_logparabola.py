@@ -13,8 +13,8 @@ roi = HealpixConeROI(data_radius=data_radius,
                      dec=dec_crab)
 
 # Instance the plugin
-maptree = "HAWC_9bin_507days_crab_data.hd5"
-response = "HAWC_9bin_507days_crab_response.hd5"
+maptree = "../data/HAWC_9bin_507days_crab_data.hd5"
+response = "../data/HAWC_9bin_507days_crab_response.hd5"
 
 hawc = HAL("HAWC",
            maptree,
@@ -87,4 +87,5 @@ fig = hawc.display_fit(smoothing_kernel_sigma=0.3,display_colorbar=True)
 fig.savefig("public_crab_fit_planes.png")
 
 # Compute TS
-jl.compute_TS("crab", like_df)
+TS = jl.compute_TS("crab", like_df)
+print(TS)
