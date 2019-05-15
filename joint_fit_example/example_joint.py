@@ -9,6 +9,7 @@ import threeML
 from astropy import units as u
 from hawc_hal import HAL, HealpixConeROI
 
+#new version of the plugin from Udara
 from VERITASLike import VERITASLike
 
 import os
@@ -18,14 +19,11 @@ def find_and_delete(name, path):
         if name in files:
              os.remove(os.path.join(root, name))
 
-def main(use_hal):
-    ROIra, ROIdec = 83.630, 22.020 #2HWC catalog position of Crab Nebula
-    ra, dec = 83.629, 22.014
-    ra, dec = ROIra, ROIdec
+def main():
+    ra, dec = 83.630, 22.020 #2HWC catalog position of Crab Nebula
     maptree = '../data/HAWC_9bin_507days_crab_data.hd5'
     response = '../data/HAWC_9bin_507days_crab_response.hd5'
     veritasdata = '../data/threemlVEGAS20hr2p45_run54809_run57993.root'
-    #veritasdata = 'data/threemlVEGAS20hr2p45.root'
     latdirectory = '../data/lat_crab_data' # will put downloaded Fermi data there
 
     data_radius = 3.0
@@ -34,8 +32,8 @@ def main(use_hal):
     #set up HAWC dataset
     roi = HealpixConeROI(data_radius=data_radius,
                             model_radius=model_radius,
-                            ra=ROIra,
-                            dec=ROIdec)
+                            ra=ra,
+                            dec=dec)
 
     hawc = HAL("HAWC", maptree, response, roi)
     hawc.set_active_measurements(1, 9) # Perform the fist only within the last nine bins
@@ -62,6 +60,7 @@ def main(use_hal):
     lat_data = {"name":"Fermi_LAT", "data":[fermi_lat], "Emin":0.1*u.GeV, "Emax":300*u.GeV, "E0":10*u.GeV }
 
     # Made up "Fermi-LAT" flux points
+    # Not used for now, these are just an example for how to set up XYLike data
     # XYLike points are amsumed in base units of 3ML: keV, and keV s-1 cm-2 (bug: even if you provide something else...).
     x = [ 1.38e6, 2.57e6, 4.46e6, 7.76e6, 18.19e6, 58.88e6] # keV
     y = [5.92e-14, 1.81e-14, 6.39e-15, 1.62e-15, 2.41e-16, 1.87e-17] # keV s-1 cm-2
@@ -69,12 +68,14 @@ def main(use_hal):
     # Just save a copy for later use (plot points). Will redefine similar objects with other "source_name"
     xy_test = threeML.XYLike("xy_test", x, y, yerr,  poisson_data=False, quiet=False, source_name='XY_Test')
 
+ 
     joint_data = {"name":"Fermi_VERITAS_HAWC", "data":[fermi_lat, veritas, hawc], "Emin":0.1*u.GeV, "Emax": 37e3*u.GeV, "E0":1*u.TeV}
 
     datasets = [veritas_data, hawc_data, lat_data, joint_data ]
 
     fig, ax = plt.subplots()
 
+    #Loop through datasets and do the fit.
     for dataset in datasets:
 
         data = threeML.DataList(*dataset["data"])
@@ -124,24 +125,15 @@ def main(use_hal):
                 subplot=ax,
             )
 
+        #workaround to get rit of gammapy temporary file
         find_and_delete("ccube.fits", "." )
-
-
-    plotXYpoints = False
-    if plotXYpoints:
-        # Ad hoc plotting of the XYLike points. Something cleaner should be added to 3ML directly.
-        xx = xy_test.x * 1e-9 # 1e-9 for keV to TeV
-        yy = xy_test.y * 1e9 * xx * xx # 1e9 for the per keV to per TeV, xx*xx for E^2
-        yyerr = xy_test.yerr * 1e9 * xx * xx
-        #plt.errorbar(xx, yy, yerr=yyerr, fmt='o', label='XYTest points')
-        plt.legend()
 
     plt.xlim(5e-2, 50e3)
     plt.xlabel("Energy [GeV]" )
-    plt.ylabel(r"$E^2~dN/dE~[erg/cm^2/s]$" )
+    plt.ylabel(r"$E^2$ dN/dE [erg/$cm^2$/s]" )
     plt.savefig("joint_spectrum.png" )
 
 
 if __name__ == "__main__":
 
-    main(use_hal=True)
+    main()
