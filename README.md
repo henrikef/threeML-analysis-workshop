@@ -39,9 +39,20 @@ Inside your conda environment, call
     
     cd ~
 
+# Getting the data
 
-# Crab example
+HAWC data and detector response file can be downloaded into the `data` directory using the script provided: `get_hawc_data.sh`
 
-## Getting the data
+You will get access to a google drive with VERITAS data, please download it manually and put it in the same directory.
 
-## Example analysis
+Fermi-LAT data is downloaded automatically by the plugin.
+
+# HAWC Crab example
+
+   cd hawc_fit
+   python crab_fit_logparabola.py
+
+# Joint Crab example
+
+    cd joint_fit_example
+    python example_joint.py
