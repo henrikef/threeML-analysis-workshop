@@ -1,3 +1,7 @@
+# About threeML
+
+See https://threeml.readthedocs.io/ and https://astromodels.readthedocs.io/
+
 # Prerequisites
 
 Installation instructions here should work on MacOS and linux.
@@ -49,8 +53,8 @@ Fermi-LAT data is downloaded automatically by the plugin.
 
 # HAWC Crab example
 
-   cd hawc_fit
-   python crab_fit_logparabola.py
+    cd hawc_fit
+    python crab_fit_logparabola.py
 
 # Joint Crab example
 
